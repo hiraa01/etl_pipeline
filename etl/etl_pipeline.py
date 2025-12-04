@@ -35,20 +35,19 @@ def transform(df):
     return category_counts
 
 
-def load(df_raw, category_counts):
+def load(df, category_counts):
     print("Loading data into SQLite database...")
-
     conn = sqlite3.connect("/app/data/news_etl.db")
 
-    # RAW NEWS → Trend Analizi için gerekli tablo
-    df_raw.to_sql("raw_news", conn, if_exists="replace", index=False)
+    # Raw table for Trend Chart
+    df[['category', 'publish_date']].to_sql("raw_news", conn, if_exists="replace", index=False)
 
-    # CATEGORY STATS → kategori dağılımı için
+    # Category stats (existing)
     category_counts.to_sql("category_stats", conn, if_exists="replace", index=False)
 
     conn.close()
-
     print("Veriler SQLite veritabanına başarıyla yüklendi!")
+
 
 
 def visualize(category_counts):
