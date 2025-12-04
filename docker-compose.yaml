@@ -1,16 +1,17 @@
 services:
   etl:
     build: ./etl
+    container_name: news_etl
     volumes:
       - ./data:/app/data
       - ./output:/app/output
-    container_name: news_etl
 
   dashboard:
     build: ./dashboard
+    container_name: news_dashboard
     ports:
       - "8501:8501"
     volumes:
-      - ./dashboard:/app
       - ./data:/app/data
-    container_name: news_dashboard
+    depends_on:
+      - etl

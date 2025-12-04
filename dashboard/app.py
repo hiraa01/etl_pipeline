@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # --- DATABASE CONNECTION ---
 @st.cache_data
 def load_data():
-    conn = sqlite3.connect("/app/data/news_etl.db")
+    conn = sqlite3.connect("file:/app/data/news_etl.db?mode=ro", uri=True)
 
     # Category counts
     category_df = pd.read_sql_query("SELECT * FROM category_stats", conn)
@@ -50,8 +50,8 @@ st.subheader("Kategoriye Göre Haber Dağılımı")
 
 fig1, ax1 = plt.subplots(figsize=(10, 6))
 ax1.barh(filtered_df["category"], filtered_df["count"], color="skyblue")
-ax1.set_xlabel("News Count")
-ax1.set_ylabel("Category")
+ax1.set_xlabel("Haber Sayısı")
+ax1.set_ylabel("Kategori")
 st.pyplot(fig1)
 
 # --- TREND LINE CHART ---
@@ -63,8 +63,12 @@ ax2.set_title("Zaman İçinde Haber Sayısı")
 ax2.set_xlabel("Tarih")
 ax2.set_ylabel("Haber Adedi")
 ax2.grid(True)
+
+
+plt.xticks(rotation=45)
+
 st.pyplot(fig2)
 
-# --- RAW CATEGORY TABLE ---
-st.subheader("Kategori Verisi Önizleme")
+# --- CATEGORY TABLE ---
+st.subheader("Kategori İstatistikleri Tablosu")
 st.dataframe(filtered_df)

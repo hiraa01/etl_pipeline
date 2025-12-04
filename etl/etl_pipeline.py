@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 def extract():
     print("Extracting data...")
 
-    # Kaggle News Category JSON dosyasını oku
     df = pd.read_json("/app/data/News_Category_Dataset_v3.json", lines=True)
 
     print(f"Toplam kayıt sayısı: {len(df)}")
@@ -15,13 +14,19 @@ def extract():
 def transform(df):
     print("Transforming data...")
 
-    # Tarih formatını pandas datetime'e çevir
+    # Date kolonunu datetime yap
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
-    # Gereksiz kolonları çıkar
-    df = df[["headline", "category", "date"]]
+    # publish_date üret
+    df["publish_date"] = df["date"].dt.date
 
-    # Kategorilere göre haber sayısı
+    # publish_date olmayanları at
+    df = df.dropna(subset=["publish_date"])
+
+    # Sadece gerekli kolonları bırak
+    df = df[["headline", "category", "publish_date"]]
+
+    # Kategori istatistikleri
     category_counts = (
         df.groupby("category")
         .size()
@@ -29,25 +34,21 @@ def transform(df):
         .sort_values("count", ascending=False)
     )
 
-    print("En çok haber içeren ilk 5 kategori:")
-    print(category_counts.head())
-
-    return category_counts
+    return df, category_counts
 
 
 def load(df, category_counts):
     print("Loading data into SQLite database...")
     conn = sqlite3.connect("/app/data/news_etl.db")
 
-    # Raw table for Trend Chart
-    df[['category', 'publish_date']].to_sql("raw_news", conn, if_exists="replace", index=False)
+    # Ham veri
+    df.to_sql("raw_news", conn, if_exists="replace", index=False)
 
-    # Category stats (existing)
+    # Kategori istatistikleri
     category_counts.to_sql("category_stats", conn, if_exists="replace", index=False)
 
     conn.close()
     print("Veriler SQLite veritabanına başarıyla yüklendi!")
-
 
 
 def visualize(category_counts):
@@ -60,21 +61,19 @@ def visualize(category_counts):
     plt.title("News Category Distribution")
     plt.tight_layout()
 
-    # Grafiği kaydet
     plt.savefig("/app/output/category_distribution.png")
     plt.close()
 
-    print("Grafik oluşturuldu: output/category_distribution.png")    
+    print("Grafik oluşturuldu: output/category_distribution.png")
 
 
 def main():
     print("ETL Pipeline başlatılıyor...")
 
     df = extract()
-    category_counts = transform(df)
+    df, category_counts = transform(df)  
     load(df, category_counts)
     visualize(category_counts)
-
 
     print("ETL Pipeline başarıyla tamamlandı!")
 
