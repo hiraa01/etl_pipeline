@@ -33,6 +33,25 @@ def transform(df):
         .reset_index(name="count")
         .sort_values("count", ascending=False)
     )
+    from nltk.sentiment.vader import SentimentIntensityAnalyzer
+    import nltk
+    nltk.download("vader_lexicon")
+
+    sia = SentimentIntensityAnalyzer()
+
+    # Headline sentiment score
+    df["sentiment"] = df["headline"].apply(lambda x: sia.polarity_scores(x)["compound"])
+
+    # Classify sentiment
+    def label_sentiment(score):
+        if score > 0.05:
+            return "Positive"
+        elif score < -0.05:
+            return "Negative"
+        else:
+            return "Neutral"
+
+    df["sentiment_label"] = df["sentiment"].apply(label_sentiment)
 
     return df, category_counts
 
@@ -43,6 +62,10 @@ def load(df, category_counts):
 
     # Ham veri
     df.to_sql("raw_news", conn, if_exists="replace", index=False)
+    
+    df[["headline", "category", "publish_date", "sentiment", "sentiment_label"]].to_sql(
+    "sentiment_news", conn, if_exists="replace", index=False
+)
 
     # Kategori istatistikleri
     category_counts.to_sql("category_stats", conn, if_exists="replace", index=False)
