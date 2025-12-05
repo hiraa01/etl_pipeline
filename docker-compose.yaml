@@ -5,6 +5,8 @@ services:
     volumes:
       - ./data:/app/data
       - ./output:/app/output
+    depends_on:
+      - postgres
 
   dashboard:
     build: ./dashboard
@@ -14,4 +16,25 @@ services:
     volumes:
       - ./data:/app/data
     depends_on:
-      - etl
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: news_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: news_user
+      POSTGRES_PASSWORD: news_pass
+      POSTGRES_DB: news_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U news_user -d news_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
