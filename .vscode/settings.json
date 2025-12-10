@@ -1,0 +1,39 @@
+{
+    "terminal.integrated.defaultProfile.windows": "WSL",
+    "terminal.integrated.profiles.windows": {
+        "WSL": {
+            "path": "C:\\Windows\\System32\\wsl.exe",
+            "args": [
+                "-d",
+                "Ubuntu",
+                "-e",
+                "bash",
+                "-l"
+            ],
+            "icon": "terminal-linux"
+        },
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        },
+        "Command Prompt": {
+            "path": "C:\\Windows\\System32\\cmd.exe",
+            "icon": "terminal-cmd"
+        }
+    },
+    "terminal.integrated.automationProfile.windows": {
+        "path": "C:\\Windows\\System32\\wsl.exe",
+        "args": [
+            "-d",
+            "Ubuntu",
+            "-e",
+            "bash",
+            "-l"
+        ]
+    },
+    "terminal.integrated.enablePersistentSessions": false,
+    "terminal.integrated.enableWindowsConpty": true,
+    "terminal.integrated.shellIntegration.enabled": true,
+    "remote.WSL.fileWatcher.polling": false
+}
