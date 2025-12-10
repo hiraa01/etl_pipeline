@@ -110,7 +110,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     with st.container():
-        st.markdown("**📊 Kategori Dağılımı**")
+        st.markdown("**Kategori Dağılımı**")
         fig1, ax1 = plt.subplots(figsize=(8, 6))
         ax1.barh(filtered_df["category"], filtered_df["count"], color="skyblue")
         ax1.set_xlabel("Haber Sayısı", fontsize=10)
@@ -121,7 +121,7 @@ with col1:
 
 with col2:
     with st.container():
-        st.markdown("**📈 Zaman Serisi**")
+        st.markdown("**Zaman Serisi**")
         fig2, ax2 = plt.subplots(figsize=(10, 6))
         if "category" in trend_tmp.columns:
             for cat in selected_category:
@@ -145,7 +145,7 @@ col3, col4 = st.columns(2)
 
 with col3:
     with st.container():
-        st.markdown("**😊 Duygu Analizi**")
+        st.markdown("**Duygu Analizi**")
         if not sentiment_filtered.empty:
             sent_cnt = (
                 sentiment_filtered.groupby(["category", "sentiment_label"])
@@ -170,7 +170,7 @@ with col3:
 
 with col4:
     with st.container():
-        st.markdown("**🔥 En Yoğun Günler**")
+        st.markdown("**En Yoğun Günler**")
         if not trend_filtered.empty:
             top_days = (
                 trend_filtered.groupby("publish_date")["count"]
@@ -193,7 +193,7 @@ with col4:
 
 # ÜÇÜNCÜ SATIR: Kelime Bulutu (Tam Genişlik)
 st.markdown("---")
-st.markdown("**☁️ Kelime Bulutu**")
+st.markdown("**Kelime Bulutu**")
 
 # Word cloud için tekrar engine oluştur
 engine_wc = create_engine(
